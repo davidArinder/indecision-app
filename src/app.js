@@ -9,38 +9,28 @@ const app = {
     subtitle: 'An App for the Indecisive',
     options: ['One', 'Two']
 }
+
+const onFormSubmit = (e) => {
+    e.preventDefault() // stops full page refresh on event
+
+    console.log('Form submitted')
+}
+
 const template = ( // wrapping parantheses only for readability, to remove an open-ended '='
 <div>
     <h1>{app.title}</h1> 
-    {app.subtitle && <p>{app.subtitle}</p>}
+    {app.subtitle && <p>{app.subtitle}</p>} {/* As long as there is a subtitle, render subtitle */}
     <p>{app.options.length > 0 ? 'Here are your options:' : 'No options'}</p>
     <ol>
         <li>Item one</li>
         <li>Item two</li>
     </ol>
+    <form onSubmit={onFormSubmit}> {/*References onFormSubmit but does not call it*/}
+        <input type="text" name="option"/>
+        <button>Add Option</button>
+    </form>
 </div>
 )
-
-const user = {
-    name: 'Aragorn',
-    age: 85,
-    location: 'Minas Tirith'
-}
-function getLocation(location) {
-    if (location) {
-        return <p>Location: {location}</p>
-    } 
-}
-
-const templateTwo = (
-<div>
-    <h1>{user.name ? user.name : 'Anonymous'}</h1>
-    {(user.age && user.age >= 18) && <p>Age: {user.age}</p>}
-    {getLocation(user.location)}
-</div>
-)
-
 
 const appRoot = document.getElementById('app')
-
-ReactDOM.render(template, appRoot) // render this element (template) into this part of the browser (appRoot)
+ReactDOM.render(template, appRoot)
