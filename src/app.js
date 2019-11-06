@@ -15,13 +15,29 @@ class IndecisionApp extends React.Component {
         }
     }
     // runs when component mounts
+    // keeps the options on the screen even on page refresh
     componentDidMount() { // lifecycle component. only available in class based component
-        console.log('fetching data')
+        try { // if valid json data
+            const json = localStorage.getItem('options')
+            const options = JSON.parse(json)
+    
+            if (options) { // only run if options are not null
+                this.setState(() => ({ options }))
+            }
+        } catch (e) { // if not valid json data
+            // do nothing at all
+        }
+
     }
     // runs when component updates
+    // store options locally
     componentDidUpdate (prevProps, prevState) {
-        console.log('saving data')
-        // don't save options every time component update fires
+        // don't run unless there is a change to the data
+        if (prevState.options.length !== this.state.options.length) { // does previous state have the same number of options as the current state?
+            const json = JSON.stringify(this.state.options) // convert json to string
+            localStorage.setItem('options', json) // store data locally
+            console.log('saving data')
+        }
     }
     componentWillUnmount() {
         console.log('componentWillUnmount')
@@ -106,6 +122,7 @@ const Options = (props) => {
     return (
         <div>
             <button onClick={props.handleDeleteOptions}>Remove All</button>
+            {props.options.length === 0 && <p>Please add an option to get started</p>} {/* if there are no options, display <p> message */}
             {
                 props.options.map((option) => (
                     // optionText lets this be accessed from outside component
@@ -153,6 +170,10 @@ class AddOption extends React.Component { // React.Component gives all the behav
             const error = this.props.handleAddOption(option)
 
             this.setState(() => ({ error }))
+
+            if (!error) { // if no error, wipe the input
+                e.target.elements.option.value = ''
+            }
     }
     render() { // React components must define render()
         return (

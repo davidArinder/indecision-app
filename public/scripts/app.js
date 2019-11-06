@@ -31,21 +31,41 @@ var IndecisionApp = function (_React$Component) {
         return _this;
     }
     // runs when component mounts
+    // keeps the options on the screen even on page refresh
 
 
     _createClass(IndecisionApp, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
             // lifecycle component. only available in class based component
-            console.log('fetching data');
+            try {
+                // if valid json data
+                var json = localStorage.getItem('options');
+                var options = JSON.parse(json);
+
+                if (options) {
+                    // only run if options are not null
+                    this.setState(function () {
+                        return { options: options };
+                    });
+                }
+            } catch (e) {// if not valid json data
+                // do nothing at all
+            }
         }
         // runs when component updates
+        // store options locally
 
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps, prevState) {
-            console.log('saving data');
-            // don't save options every time component update fires
+            // don't run unless there is a change to the data
+            if (prevState.options.length !== this.state.options.length) {
+                // does previous state have the same number of options as the current state?
+                var json = JSON.stringify(this.state.options); // convert json to string
+                localStorage.setItem('options', json); // store data locally
+                console.log('saving data');
+            }
         }
     }, {
         key: 'componentWillUnmount',
@@ -171,6 +191,12 @@ var Options = function Options(props) {
             { onClick: props.handleDeleteOptions },
             'Remove All'
         ),
+        props.options.length === 0 && React.createElement(
+            'p',
+            null,
+            'Please add an option to get started'
+        ),
+        ' ',
         props.options.map(function (option) {
             return (
                 // optionText lets this be accessed from outside component
@@ -232,6 +258,11 @@ var AddOption = function (_React$Component2) {
             this.setState(function () {
                 return { error: error };
             });
+
+            if (!error) {
+                // if no error, wipe the input
+                e.target.elements.option.value = '';
+            }
         }
     }, {
         key: 'render',
