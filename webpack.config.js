@@ -12,6 +12,10 @@ module.exports = {
             test: /\.js$/,
             exclude: /node_modules/
         }]
+    },
+    devtool: 'cheap-module-eval-source-map', // links errors, etc to the file I wrote rather than bundle.js in dev tools
+    devServer: {
+        contentBase: path.join(__dirname, 'public')
     }
 }
 
